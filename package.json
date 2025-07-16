@@ -2,6 +2,7 @@
   "name": "nutrition",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,19 +10,37 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@huggingface/inference": "^4.5.1",
+    "@langchain/community": "^0.3.48",
+    "@langchain/core": "^0.3.61",
+    "@langchain/langgraph": "^0.3.4",
+    "@langchain/ollama": "^0.2.3",
+    "@qdrant/js-client-rest": "^1.14.1",
+    "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
+    "langchain": "^0.3.29",
+    "langfuse": "^3.37.4",
+    "langfuse-langchain": "^3.37.4",
+    "mongoose": "^8.16.1",
+    "next": "15.3.3",
+    "next-auth": "^4.24.11",
+    "pdf-parse": "^1.1.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.3"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4",
+    "typescript": "^5.8.2"
   }
 }
