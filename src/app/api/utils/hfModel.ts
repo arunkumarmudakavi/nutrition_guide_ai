@@ -60,7 +60,7 @@ export async function initializePdfQA({
 
   // 6. Prompt + Chain
   const prompt = ChatPromptTemplate.fromTemplate(
-    `Answer the user's question: {input} based on the following context {context}`
+    `Answer the user's question: {input} based on the following context {context}.`
   );
 
   const combineDocsChain = await createStuffDocumentsChain({
