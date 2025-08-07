@@ -1,6 +1,7 @@
 "use client"
 
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation"
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,7 +34,7 @@ const signUp = () => {
         <button className="border rounded p-1 font-semibold bg-black text-white">SIGN UP</button>
      </form>
      <section className="font-bold text-sm mb-6 text-blue-700">
-        Don't have an account? <span className="italic underline">Sign Up</span>
+        Don't have an account? <Link href="/signin" className="italic underline">Sign In</Link>
       </section>
       {error && <p className="font-bold italic text-red-800">{error}</p>}
      </div>
