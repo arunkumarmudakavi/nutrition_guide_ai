@@ -1,75 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/src/db/connection";
 import User from "@/src/app/models/User.model";
-
-const generateAccessAndRefreshTokens = async (userId:any) => {
-      const user = await User.findById(userId);
-      if(!user) throw new Error("User not found")
-      const accessToken = user.generateAccessToken();
-      const refreshToken = user.generateRefreshToken();
-  
-      user.refreshToken = refreshToken;
-      await user.save({ validateBeforeSave: false });
-  
-      return {
-        accessToken,
-        refreshToken,
-      };
-  };
+import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
-    try {
-        const {email, password} = await request.json();
-        console.log(email, password)
-        
-        if(!email || !password) {
-            return NextResponse.json(
-                {error: "All are required"},
-                {status: 400}
-            )
-        }
+  try {
+    const userData = await request.json();
+    const { email, password } = userData;
+    console.log(userData);
+    await connectToDatabase();
+    const user = await User.findOne({ email });
 
-        await connectToDatabase();
-
-        const existingUser = await User.findOne({email})
-
-        if(!existingUser) {
-            return NextResponse.json(
-                {error: "User doesn't exist"},
-                {status: 404}
-            )
-        }
-
-        const isPasswordValid = await existingUser.isPasswordCorrect(password);
-        if(!isPasswordValid) {
-            return NextResponse.json(
-                {error: "Invalid password"},
-                {status: 401}
-            )
-        }
-
-        const { accessToken, refreshToken} = await generateAccessAndRefreshTokens(existingUser._id)
-
-        const loggedInUser = await User.findById(existingUser._id).select("-password -refreshToken")
-
-        const options = {
-            httpOnly: true,
-            secure: true,
-        }
-
-        const response = NextResponse.json(
-            {message: "User logged in successfully", user: loggedInUser, success: true},
-        )
-
-        response.cookies.set("accessToken", accessToken, options)
-        response.cookies.set("refreshToken", refreshToken, options)
-
-        return response;
-
-    } catch (error) {
-        return NextResponse.json(
-            {error: "Failed to register user"},
-            {status: 500}
-        )
+    if (!user) {
+      return NextResponse.json(
+        { error: "User doesn't exist" },
+        { status: 400 }
+      );
     }
+    console.log("user exist");
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    if (!isPasswordValid) {
+      return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+    }
+
+    const tokenPayload = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+    };
+
+    const token = await jwt.sign(
+      tokenPayload,
+      process.env.ACCESS_TOKEN_SECRET!,
+      { expiresIn: "1d" }
+    );
+
+    const response = NextResponse.json({
+      message: "Logged In Success",
+      success: true,
+    });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return response;
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
 }
